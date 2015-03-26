@@ -2094,6 +2094,7 @@ ia64*-hpux*)
         _PLATFORM_HAVE_RIL=1
         MOZ_B2G_FM=1
         MOZ_SYNTH_PICO=1
+        MOZ_SYNTH_ESPEAK=1
     else
         _PLATFORM_DEFAULT_TOOLKIT=cairo-android
         if test "$COMPILE_ENVIRONMENT"; then
@@ -7622,6 +7623,18 @@ if test -n "$MOZ_SYNTH_PICO"; then
     AC_DEFINE(MOZ_SYNTH_PICO)
 fi
 AC_SUBST(MOZ_SYNTH_PICO)
+
+dnl ========================================================
+dnl = Enable eSpeak Speech Synthesis
+dnl ========================================================
+MOZ_ARG_ENABLE_BOOL(synth-espeak,
+[  --enable-synth-espeak  Set compile flags necessary for compiling eSpeak Web Speech API ],
+    MOZ_SYNTH_ESPEAK=1,
+    MOZ_SYNTH_ESPEAK= )
+if test -n "$MOZ_SYNTH_ESPEAK"; then
+    AC_DEFINE(MOZ_SYNTH_ESPEAK)
+fi
+AC_SUBST(MOZ_SYNTH_ESPEAK)
 
 dnl ========================================================
 dnl = Enable Support for Time Manager API

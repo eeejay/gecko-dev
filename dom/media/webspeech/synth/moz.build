@@ -46,6 +46,9 @@ if CONFIG['MOZ_WEBSPEECH']:
     elif CONFIG['MOZ_SYNTH_PICO']:
         DIRS = ['pico']
 
+    if CONFIG['MOZ_SYNTH_ESPEAK']:
+        DIRS += ['espeak']
+
 IPDL_SOURCES += [
     'ipc/PSpeechSynthesis.ipdl',
     'ipc/PSpeechSynthesisRequest.ipdl',
