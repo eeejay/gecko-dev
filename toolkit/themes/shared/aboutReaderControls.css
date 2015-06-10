@@ -387,6 +387,100 @@
   background-image: url("chrome://global/skin/reader/pocket.svg#pocket-mark-added");
 }
 
+#speech-button {
+  background-image: url("chrome://global/skin/reader/RM-Speech-24x24.svg#speech");
+}
+
+#speech-button.toggled {
+  background-image: url("chrome://global/skin/reader/RM-Speech-24x24.svg#speech-toggled");
+}
+
+#speech-dropdown select {
+  border-bottom: 1px solid #B5B5B5;
+  border-top: 1px solid #B5B5B5;
+  width: 100%;
+  -moz-appearance: none;
+  width: 100%;
+  background: transparent;
+  text-align: center;
+}
+
+#speech-control-buttons {
+  display: flex;
+}
+
+#speech-control-buttons > button {
+  background-color: transparent;
+  background-size: 18px 18px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  height: 60px;
+  flex-grow: 1;
+  border: none;
+  color: #666;
+  font-size: 16px;
+}
+
+#speech-control-buttons > button:not(:first-child) {
+  border-left: 1px solid #B5B5B5;
+}
+
+#speech-control-buttons > button:hover {
+  background-color: #ebebeb;
+}
+
+
+#speech-button:hover:active {
+  background-image: url("chrome://global/skin/reader/RM-Speech-24x24.svg#speech-hover");
+}
+
+#speech-skip-previous {
+  background-image: url("chrome://global/skin/reader/RM-Skip-Previous-24x24.svg");
+}
+
+#speech-skip-next {
+  background-image: url("chrome://global/skin/reader/RM-Skip-Next-24x24.svg");
+}
+
+#speech-play-pause {
+  background-image: url("chrome://global/skin/reader/RM-Play-24x24.svg");
+}
+
+#speech-play-pause.speaking {
+  background-image: url("chrome://global/skin/reader/RM-Pause-24x24.svg");
+}
+
+#speech-rate-controls {
+  display: flex;
+  padding: 0.25rem 0px;
+  border-top: 1px solid #B5B5B5;
+}
+
+#speech-rate-controls input {
+  flex-grow: 1;
+  width: calc(100% - 2rem);
+  margin: 0px;
+}
+
+#speech-rate-controls input[type="range"]::-moz-range-track {
+  background-color: #B5B5B5;
+}
+
+#speech-rate-controls input[type="range"]::-moz-range-thumb {
+    background-color: #808080;
+    height: 0.75rem;
+    width: 0.75rem;
+    border-color: #808080;
+  }
+
+#speech-rate-controls span {
+  font-size: 14px;
+  display: inline-block;
+  text-align: center;
+  width: 20%;
+  color: #666;
+}
+
 @media print {
   .toolbar {
     display: none !important;

@@ -1787,6 +1787,7 @@ Readability.prototype = {
 
     var metadata = this._getArticleMetadata();
     var articleTitle = metadata.title || this._getArticleTitle();
+    var articleLang = this._doc.documentElement.getAttribute('lang');
 
     var articleContent = this._grabArticle();
     if (!articleContent)
@@ -1820,6 +1821,7 @@ Readability.prototype = {
              dir: this._articleDir,
              content: articleContent.innerHTML,
              length: articleContent.textContent.length,
-             excerpt: metadata.excerpt };
+             excerpt: metadata.excerpt,
+             lang: articleLang };
   }
 };

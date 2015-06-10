@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <style>
+      use:not(:target) {
+        display: none;
+      }
+      #speech {
+        fill: #808080;
+      }
+      #speech-hover {
+        fill: #fff;
+      }
+      #speech-toggled {
+        fill: #0095DD;
+      }
+    </style>
+    <g id="speech-shape">
+      <path d="m 11.999023,2.9566675 c -5.4604209,3.618e-4 -9.8867312,3.6624296 -9.8867182,8.1796875 0.00204,1.891555 0.7964705,3.724061 2.2480469,5.185547 l -1.7454401,4.721431 4.5911432,-2.754634 c 1.4664792,0.673186 3.1158472,1.026718 4.7929682,1.027344 5.461184,5.31e-4 9.888686,-3.661799 9.888672,-8.179688 1.3e-5,-4.5178891 -4.427488,-8.1802183 -9.888672,-8.1796875 z"/>
+    </g>
+  </defs>
+  <use id="speech" xlink:href="#speech-shape"/>
+  <use id="speech-hover" xlink:href="#speech-shape"/>
+  <use id="speech-toggled" xlink:href="#speech-shape"/>
+</svg>

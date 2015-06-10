@@ -68,6 +68,24 @@
     <li><button id="toggle-button" class="button toggle-button" hidden="true"/></li>
     <li><button id="list-button" class="button list-button" hidden="true"/></li>
     <li><button id="pocket-button" class="button" hidden="true"/></li>
+    <ul id="speech-dropdown" class="dropdown" hidden="true">
+      <li><button id="speech-button" class="dropdown-toggle button"/></li>
+      <li class="dropdown-popup">
+        <div class="speech-popup-section" id="speech-control-buttons">
+          <button id="speech-skip-previous"/>
+          <button id="speech-play-pause"/>
+          <button id="speech-skip-next"/>
+        </div>
+        <div id="speech-rate-controls">
+          <span>Slow</span>
+          <input type="range" min="-4" max="4" step="0.25" value="0">
+          <span>Fast</span>
+        </div>
+        <div class="dropdown-arrow"/>
+      </li>
+    </ul>
+
+    <li><button id="speech-button" class="button" hidden="true" aria-pressed="false"/></li>
   </ul>
 
 </body>

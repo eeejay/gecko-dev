@@ -66,7 +66,8 @@ var AboutReader = function(mm, win, articlePromise) {
 
   doc.addEventListener("visibilitychange", this, false);
 
-  this._setupStyleDropdown();
+  this._setupDropdown("style-dropdown", "aboutReader.toolbar.typeControls");
+  this._setupDropdown("speech-dropdown", "aboutReader.toolbar.speech");
   this._setupButton("close-button", this._onReaderClose.bind(this), "aboutReader.toolbar.close");
   this._setupButton("share-button", this._onShare.bind(this), "aboutReader.toolbar.share");
 
@@ -118,6 +119,10 @@ var AboutReader = function(mm, win, articlePromise) {
   this._setFontType(fontType);
 
   this._setupFontSizeButtons();
+
+  if (this._win.speechSynthesis) {
+    this._setupSpeechControlButtons();
+  }
 
   // Track status of reader toolbar add/remove toggle button
   this._isReadingListItem = -1;
@@ -250,6 +255,9 @@ AboutReader.prototype = {
         this._mm.removeMessageListener("Reader:Removed", this);
         this._mm.removeMessageListener("Sidebar:VisibilityChange", this);
         this._mm.removeMessageListener("ReadingList:VisibilityStatus", this);
+        if (this._win.speechSynthesis) {
+          this._win.speechSynthesis.cancel();
+        }
         this._windowUnloaded = true;
         break;
     }
@@ -452,6 +460,84 @@ AboutReader.prototype = {
     }, true);
   },
 
+  _setupSpeechControlButtons: function() {
+    this._doc.getElementById("speech-dropdown").hidden = false;
+    let skipPreviousButton = this._doc.getElementById("speech-skip-previous");
+    let skipNextButton = this._doc.getElementById("speech-skip-next");
+    let playPauseButton = this._doc.getElementById("speech-play-pause");
+    this._currentSpeakingParagraph = 0;
+
+    skipPreviousButton.title = gStrings.GetStringFromName("aboutReader.toolbar.speech-previous");
+    skipNextButton.title = gStrings.GetStringFromName("aboutReader.toolbar.speech-next");
+    playPauseButton.title = gStrings.GetStringFromName("aboutReader.toolbar.speech-speak");
+
+    playPauseButton.addEventListener('click', () => {
+      if (this._win.speechSynthesis.paused) {
+        this._win.speechSynthesis.resume();
+      } else if (this._win.speechSynthesis.speaking || this._win.speechSynthesis.pending) {
+        this._win.speechSynthesis.pause();
+      } else {
+        this._speakContent(0, playPauseButton).then();
+      }
+    });
+
+    skipNextButton.addEventListener('click', () => {
+      this._speakContent(++this._currentSpeakingParagraph, playPauseButton);
+    });
+
+    skipPreviousButton.addEventListener('click', () => {
+      this._currentSpeakingParagraph = Math.max(
+        this._currentSpeakingParagraph - 1, 0);
+      this._speakContent(this._currentSpeakingParagraph, playPauseButton);
+    });
+  },
+
+  _speakContent: function(aStartIndex, aPlayPauseButton) {
+    let paragraphs =
+      this._doc.querySelectorAll(
+        '#reader-header > *:not(style):not(:empty), #moz-reader-content > .page > * > *:not(style):not(:empty)');
+    this._win.speechSynthesis.cancel();
+    for (let i = aStartIndex; i < paragraphs.length; i++) {
+      let paragraph = paragraphs[i];
+      let index = i;
+      let utterance = new this._win.SpeechSynthesisUtterance(paragraph.textContent);
+
+      utterance.addEventListener('start', () => {
+        this._currentSpeakingParagraph = index;
+        paragraph.classList.add('narrating');
+        aPlayPauseButton.classList.add('speaking');
+        aPlayPauseButton.title = gStrings.GetStringFromName("aboutReader.toolbar.speech-pause");
+        let bb = paragraph.getBoundingClientRect();
+        if (bb.top < 0) {
+          paragraph.scrollIntoView(true);
+        } else if (bb.bottom > this._win.innerHeight) {
+          paragraph.scrollIntoView(false);
+        }
+      });
+
+      utterance.addEventListener('pause', () => {
+        aPlayPauseButton.classList.remove('speaking');
+        aPlayPauseButton.title = gStrings.GetStringFromName("aboutReader.toolbar.speech-speak");
+      });
+
+      utterance.addEventListener('resume', () => {
+        aPlayPauseButton.classList.add('speaking');
+        aPlayPauseButton.title = gStrings.GetStringFromName("aboutReader.toolbar.speech-pause");
+      });
+
+      utterance.addEventListener('end', () => {
+        paragraph.classList.remove('narrating');
+        if (!this._win.speechSynthesis.pending) {
+          this._currentSpeakingParagraph = 0;
+          aPlayPauseButton.classList.remove('speaking');
+          aPlayPauseButton.title = gStrings.GetStringFromName("aboutReader.toolbar.speech-speak");
+        }
+      });
+
+      this._win.speechSynthesis.speak(utterance);
+    }
+  },
+
   _updateFooter: function() {
     let footer = this._doc.getElementById("reader-footer");
     if (!this._article || this._isReadingListItem == 0 ||
@@ -584,8 +670,9 @@ AboutReader.prototype = {
   },
 
   _setToolbarVisibility: function(visible) {
-    let dropdown = this._doc.getElementById("style-dropdown");
-    dropdown.classList.remove("open");
+    let openDropdowns = this._doc.querySelectorAll(".dropdown.open");
+    Array.prototype.forEach.call(openDropdowns,
+      (dropdown) => dropdown.classList.remove("open"));
 
     if (this._getToolbarVisibility() === visible) {
       return;
@@ -894,7 +981,7 @@ AboutReader.prototype = {
         return;
 
       aEvent.stopPropagation();
-      callback();
+      callback(button);
     }, true);
   },
 
@@ -908,11 +995,11 @@ AboutReader.prototype = {
     button.setAttribute("title", gStrings.GetStringFromName(titleEntity));
   },
 
-  _setupStyleDropdown: function() {
+  _setupDropdown: function (id, titleEntity) {
     let doc = this._doc;
     let win = this._win;
 
-    let dropdown = doc.getElementById("style-dropdown");
+    let dropdown = doc.getElementById(id);
     let dropdownToggle = dropdown.querySelector(".dropdown-toggle");
     let dropdownPopup = dropdown.querySelector(".dropdown-popup");
 
@@ -935,7 +1022,7 @@ AboutReader.prototype = {
       }, true);
     }
 
-    dropdownToggle.setAttribute("title", gStrings.GetStringFromName("aboutReader.toolbar.typeControls"));
+    dropdownToggle.setAttribute("title", gStrings.GetStringFromName(titleEntity));
     dropdownToggle.addEventListener("click", event => {
       if (!event.isTrusted)
         return;
@@ -945,6 +1032,8 @@ AboutReader.prototype = {
       if (dropdown.classList.contains("open")) {
         dropdown.classList.remove("open");
       } else {
+        Array.prototype.forEach.call(doc.querySelectorAll(".dropdown.open"),
+          (dd) => dd.classList.remove("open"));
         dropdown.classList.add("open");
         if (this._isToolbarVertical) {
           updatePopupPosition();

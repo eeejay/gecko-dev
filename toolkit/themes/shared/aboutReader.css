@@ -122,3 +122,15 @@ body.sepia blockquote {
 body.dark blockquote {
   -moz-border-start: 2px solid #eeeeee !important;
 }
+
+body.light .narrating {
+  background-color: #ffc;
+}
+
+body.sepia .narrating {
+  background-color: #e0d7c5;
+}
+
+body.dark .narrating {
+  background-color: #242424;
+}
